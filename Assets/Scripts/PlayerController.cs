@@ -33,6 +33,8 @@ public class PlayerController : MonoBehaviour {
 				Mathf.Clamp (playerRigidbody.position.z + moveVertical, boundary.zMin, boundary.zMax)
 			);
 
-
+		// Smoothly rotates player as they move left/right
+		Quaternion tiltTarget = Quaternion.Euler (0f, 0f, moveHorizontal * -tiltAmount);
+		transform.rotation = Quaternion.Slerp (playerRigidbody.rotation, tiltTarget, Time.deltaTime * tiltSpeed);
 	}
 } 
