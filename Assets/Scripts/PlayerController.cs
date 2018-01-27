@@ -17,15 +17,18 @@ public class PlayerController : MonoBehaviour {
 
 	void FixedUpdate ()
 	{
-		// Controls and restricts player movement without allowing any elastic movement past clamp limit
+	// ** Player Controls
 		Rigidbody playerRigidbody = GetComponent<Rigidbody>();
-		float moveHorizontal = Input.GetAxis ("Horizontal") * playerSpeed * Time.deltaTime;
-		float moveVertical = Input.GetAxis ("Vertical") * playerSpeed * Time.deltaTime;
+		// Input.GetAxis("Horizontal/Vertical") return a number between -1 and 1
+		// Multiplying a movement value by Time.deltaTime means move by this amount per second instead of per frame
+		float moveHorizontal = Input.GetAxisRaw ("Horizontal") * playerSpeed * Time.deltaTime;
+		float moveVertical = Input.GetAxisRaw ("Vertical") * playerSpeed * Time.deltaTime;
 		
 		Vector3 movement = new Vector3 (moveHorizontal, 0.0f, moveVertical);
 		
 		playerRigidbody.velocity = movement;
 		
+		// Restricts player movement without allowing any elastic movement past clamp limit
 		playerRigidbody.position = new Vector3 
 			(
 				Mathf.Clamp (playerRigidbody.position.x + moveHorizontal, boundary.xMin, boundary.xMax),
@@ -33,8 +36,9 @@ public class PlayerController : MonoBehaviour {
 				Mathf.Clamp (playerRigidbody.position.z + moveVertical, boundary.zMin, boundary.zMax)
 			);
 
-		// Smoothly rotates player as they move left/right
+		// Rotates Player as they move left/right
 		Quaternion tiltTarget = Quaternion.Euler (0f, 0f, moveHorizontal * -tiltAmount);
 		transform.rotation = Quaternion.Slerp (playerRigidbody.rotation, tiltTarget, Time.deltaTime * tiltSpeed);
+	// End Player controls **
 	}
 } 
