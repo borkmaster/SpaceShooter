@@ -10,10 +10,24 @@ public class Boundary
 
 public class PlayerController : MonoBehaviour {
 
+	public GameObject shot;
+	public Transform shotSpawn;
+	public float fireRate;
+	private float nextFire;
+
 	public float playerSpeed;
 	public float tiltAmount; // ~ 1800f is a full rotation with this setup
 	public float tiltSpeed;
 	public Boundary boundary;
+
+	void Update()
+	{
+		if (Input.GetButton ("Fire1") && Time.time > nextFire)
+		{
+			nextFire = Time.time + fireRate;
+			GameObject clone = Instantiate (shot, shotSpawn.position, shotSpawn.rotation) as GameObject;
+		}
+	}
 
 	void FixedUpdate ()
 	{
