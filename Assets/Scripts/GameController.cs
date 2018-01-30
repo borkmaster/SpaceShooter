@@ -14,7 +14,8 @@ public class GameController : MonoBehaviour
 	{
 		StartCoroutine("SpawnWaves");
 	}
-	
+
+	// Infinitely spawns waves of asteroids
 	IEnumerator SpawnWaves()
 	{
 		yield return new WaitForSeconds(startWait);
