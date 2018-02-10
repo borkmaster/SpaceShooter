@@ -3,18 +3,23 @@ using System.Collections;
 
 public class RepeatingBackground : MonoBehaviour 
 {
-	private float backgroundLength;				//A float to store the length of the attached GameObject.
-	private float startPosition;
-	public float resetPosition;
+	public bool firstTile;
+	private float backgroundLength;				// A float to store the length of the attached GameObject.
+	private Vector3 startPosition;
+	private float resetPosition;
 	private Transform myTransform;
+	private float lastResetTime;
+	private static float backgroundScrollSpeed = -5f;
 	
 	private void Awake ()
 	{
-		//Store the size of the collider along the x axis (its length in units).
+		lastResetTime = 0;
 		myTransform = GetComponent<Transform>();
 		backgroundLength = GetComponent<Renderer>().bounds.size.z;
-		startPosition = myTransform.localPosition.z;
-		resetPosition = startPosition - backgroundLength;
+		startPosition = myTransform.localPosition;
+		resetPosition = startPosition.z - backgroundLength * 2f;
+		if (firstTile)
+			resetPosition += backgroundLength;
 	}
 	
 	//Update runs once per frame
@@ -27,6 +32,11 @@ public class RepeatingBackground : MonoBehaviour
 			//If true, this means this object is no longer visible and we can safely move it forward to be re-used.
 			RepositionBackground ();
 		}
+		else
+		{
+			float newPosition = (Time.time - lastResetTime) * backgroundScrollSpeed;
+			transform.localPosition = startPosition + (Vector3.forward * newPosition);
+		}
 	}
 	
 	//Moves the object this script is attached to right in order to create our looping background effect.
@@ -38,7 +48,14 @@ public class RepeatingBackground : MonoBehaviour
 		(
 			myTransform.localPosition.x,
 			myTransform.localPosition.y,
-			myTransform.localPosition.z + (backgroundLength)
+			myTransform.localPosition.z + (backgroundLength * 2f)
 		);
+		lastResetTime = Time.time;
+		firstTile = false;
+	}
+	
+	public void setScrollSpeed(float newScrollSpeed)
+	{
+		backgroundScrollSpeed = newScrollSpeed;
 	}
 }
